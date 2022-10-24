@@ -7,9 +7,8 @@
   pre_tasks:
     - name: Install Dependencies
       package:
-        name: ['acl', 'bzip2', 'git', 'make', 'python-psycopg2', 'python3-psycopg2', 'tar', 'python3-virtualenv',  'gcc', 'openssl-devel', 'bzip2-devel', 'libffi-devel', 'zlib-devel', 'xz-devel' ] 
+        name: ['acl', 'bzip2', 'git', 'make', 'python-psycopg2', 'python3-psycopg2', 'tar', 'python3-virtualenv',  'gcc', 'openssl-devel', 'bzip2-devel', 'libffi-devel', 'zlib-devel', 'xz-devel', 'wget'] 
   
-  tasks:
     - name: Update ca-certificates
       ansible.builtin.yum:
         name: ca-certificates
@@ -24,8 +23,7 @@
     - name: Configure, compile and install Python3.7
       shell: cd /tmp/Python-3.7.11 && {{ item }}
       with_items:
-        - ./configure --enable-optimizations
-        - make
+        - ./configure --enable-optimizations 
         - make altinstall
     
     - name: Correct python version selected
