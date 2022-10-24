@@ -1,0 +1,53 @@
+---
+- hosts: galaxyservers
+  become: true
+  become_user: root
+  vars_files:
+    - group_vars/secret.yml
+  pre_tasks:
+    - name: Install Dependencies
+      package:
+        name: ['acl', 'bzip2', 'git', 'make', 'python-psycopg2', 'python3-psycopg2', 'tar', 'python3-virtualenv',  'gcc', 'openssl-devel', 'bzip2-devel', 'libffi-devel', 'zlib-devel', 'xz-devel' ] 
+  
+  tasks:
+    - name: Update ca-certificates
+      ansible.builtin.yum:
+        name: ca-certificates
+        state: latest
+ 
+    - name: Download and unarchive Python3.7.11
+      ansible.builtin.unarchive:
+        src: https://www.python.org/ftp/python/3.7.11/Python-3.7.11.tgz
+        dest: /tmp
+        remote_src: yes
+        
+    - name: Configure, compile and install Python3.7
+      shell: cd /tmp/Python-3.7.11 && {{ item }}
+      with_items:
+        - ./configure --enable-optimizations
+        - make
+        - make altinstall
+    
+    - name: Correct python version selected
+      alternatives:
+        name: python3
+        link: /usr/bin/python3
+        path: /usr/local/bin/python3.7
+
+    - name: Put SELinux in permissive mode.
+      selinux:
+        policy: targeted
+        state: permissive
+
+  roles:
+    - galaxyproject.postgresql
+    - role: natefoo.postgresql_objects
+      become: true
+      become_user: postgres
+    - geerlingguy.pip
+    - galaxyproject.galaxy
+    - role: uchida.miniconda
+      become: true
+      become_user: "{{ galaxy_user.name }}"
+    - galaxyproject.nginx
+    - galaxyproject.tusd
