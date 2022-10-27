@@ -1,1 +1,1 @@
-# galaxy24-10-22
+# galaxy 22.05 playbook
