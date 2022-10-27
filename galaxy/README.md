@@ -1,2 +1,3 @@
-# galaxy24-10-22
+# galaxy
 centos7
+rockylinux9
