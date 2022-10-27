@@ -2,8 +2,8 @@
 - hosts: galaxyservers
   become: true
   become_user: root
-  vars_files:
-    - group_vars/secret.yml
+    #  vars_files:             # uncomment if use vault
+    #    - group_vars/secret.yml
 
   pre_tasks:
     - name: Include tasks for CentOS7
@@ -14,60 +14,11 @@
       import_tasks: pretasks_rockylinux9.yml
       when: ansible_distribution == "Rocky"
 
-#  - name: Install Dependencies for CentOS7
-#    package:
-#      name: ['acl', 'bzip2', 'git', 'make', 'python-psycopg2', 'python3-psycopg2', 'tar', 'python3-virtualenv',  'gcc', 'openssl-devel', 'bzip2-devel', 'libffi-devel', 'zlib-devel', 'xz-devel', 'sqlite-devel', 'wget'] 
-#    when: ansible_distribution == 'CentOS'
-#
-#   - name: Install Dependencies for Rocky Linux
-#     package:
-#       name: ['acl', 'bzip2', 'git', 'make', 'python-psycopg2', 'python3-psycopg2', 'tar', 'pip',  'gcc', 'openssl-devel', 'bzip2-devel', 'libffi-devel', 'zlib-devel', 'xz-devel', 'sqlite-devel', 'wget']
-#      when: ansible_distribution == "Rocky"
-#        
-#    - name: Install Packages for Rocky Linux locales settings
-#      dnf:
-#        name: 
-#          - langpacks-en 
-#          - glibc-all-langpacks
-#        state: present
-#      when: ansible_distribution == "Rocky"
-#
-#    - name: Install virtualenv for RockyLinux
-#      pip: 
-#        name: virtualenv
-#      when: ansible_distribution == "Rocky"
-
     - name: Update ca-certificates
       yum:
         name: ca-certificates
         state: latest
-
-#    - name: Check if python is already installed
-#      stat: path=/usr/local/bin/python3.7
-#      register: python3
-#      when: ansible_distribution == 'CentOS'
-#
-#    - name: Download and unarchive Python3.7.11
-#      unarchive:
-#        src: https://www.python.org/ftp/python/3.7.11/Python-3.7.11.tgz
-#        dest: /tmp
-#        remote_src: yes
-#      when: ansible_distribution == 'CentOS'
-#        
-#    - name: Configure, compile and install Python3.7
-#      shell: cd /tmp/Python-3.7.11 && {{ item }}
-#      with_items:
-#        - ./configure --enable-optimizations 
-#        - make altinstall
-#      when: ansible_distribution == 'CentOS'
-#    
-#    - name: Correct python version selected
-#      alternatives:
-#        name: python3
-#        link: /usr/bin/python3
-#        path: /usr/local/bin/python3.7
-#      when: ansible_distribution == 'CentOS'
-
+          
     - name: Put SELinux in permissive mode.
       selinux:
         policy: targeted
